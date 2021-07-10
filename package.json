@@ -1,0 +1,30 @@
+{
+  "name": "codemirror-mode-ipaddr",
+  "version": "1.0.0",
+  "description": "IP addresses mode for CodeMirror",
+  "main": "src/ipaddr.js",
+  "scripts": {
+    "test": "true"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xavierog/codemirror-mode-ipaddr.git"
+  },
+  "keywords": [
+    "codemirror-mode",
+    "ip",
+    "ipv4",
+    "ipv6",
+    "ipaddr",
+    "addr",
+    "address",
+    "cidr",
+    "iprange"
+  ],
+  "author": "Xavier G.",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/xavierog/codemirror-mode-ipaddr/issues"
+  },
+  "homepage": "https://github.com/xavierog/codemirror-mode-ipaddr#readme"
+}
