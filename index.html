@@ -1,0 +1,199 @@
+<!doctype html>
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>CodeMirror IP addresses (ipaddr) mode</title>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.61.1/codemirror.min.css"
+			integrity="sha512-xIf9AdJauwKIVtrVRZ0i4nHP61Ogx9fSRAkCLecmE2dL/U8ioWpDvFCAy4dcfecN72HHB9+7FfQj3aiO68aaaw=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer" />
+		<style>
+			.CodeMirror {
+				border-top: 1px solid black;
+				border-bottom: 1px solid black;
+				height: 100%;
+			}
+			td > .CodeMirror {
+				border: 1px solid black;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>CodeMirror IP addresses (ipaddr) mode</h1>
+		<p>
+			This is a <a href="https://codemirror.net/">CodeMirror</a> mode that brings
+			syntax highlighting for IP addresses.
+		</p>
+		<h2 id="h2mime">MIME types defined</h2>
+		<p>
+			<ul>
+				<li>text/x-ip-address (default)</li>
+				<li>text/x-ipv4-address (consider IPv6 addresses as errors)</li>
+				<li>text/x-ipv6-address (consider IPv4 addresses as errors)</li>
+			</ul>
+		</p>
+
+		<h2 id="h2formats">Supported formats</h2>
+		<table>
+			<thead>
+				<tr>
+					<th></th>
+					<th>IPv6</th>
+					<th>IPv4</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Addresses</td>
+					<td><textarea data-mime="text/x-ipv6-address">2a01:7c8:aab0:26e:5054:ff:fe3a:8388</textarea></td>
+					<td><textarea data-mime="text/x-ipv4-address">149.210.142.219</textarea></td>
+				</tr>
+				<tr>
+					<td>CIDR</td>
+					<td><textarea data-mime="text/x-ipv6-address">2a01:7c8::/32</textarea></td>
+					<td><textarea data-mime="text/x-ipv4-address">149.210.128.0/17</textarea></td>
+				</tr>
+				<tr>
+					<td>Ranges</td>
+					<td><textarea data-mime="text/x-ipv6-address">2a01:07c8::-2a01:07c8:ffff:ffff:ffff:ffff:ffff:ffff</textarea></td>
+					<td><textarea data-mime="text/x-ipv4-address">149.210.128.0-149.210.255.255</textarea></td>
+				</tr>
+				<tr>
+					<td>Dual addresses</td>
+					<td colspan="2"><textarea data-mime="text/x-ipv6-address">2a01:7c8:aab0:26e:5054:ff:1.2.3.4</textarea></td>
+				</tr>
+			</tbody>
+		</table>
+
+		<h2 id="h2options">Options:</h2>
+		<p>
+			<ul>
+				<li>ipv4_ranges: boolean: accept IPv4 ranges, e.g. 10.0.0.0-10.255.255.255</li>
+				<li>ipv6_ranges: boolean: accept IPv6 ranges, e.g. 2001:0db8::-2001:0db8:ffff::</li>
+				<li>ipv4_cidr: boolean: accept IPv4 CIDR suffixes, e.g. 10.0.0.0/8</li>
+				<li>ipv6_cidr: boolean: accept IPv6 CIDR suffixes, e.g. 2001:db8::/32</li>
+				<li>strict: boolean: strict mode</li>
+			</ul>
+			All options above default to true.
+		</p>
+
+		<h2 id="h2strict">Strict mode</h2>
+		If strict mode is enabled, only one value (address, range or CIDR) will be parsed; everything else will be marked as erroneous.
+		Example with an IP range:
+		<textarea data-mime="text/x-ip-address">
+127.0.0.1-127.255.255.255 127.0.0.2
+127.0.0.3 ::1
+Everything on other lines
+is considered erroneous</textarea>
+		If strict mode is disabled, codemirror-mode-ipaddr parses and highlights all IP addresses in the text editor:
+		<textarea data-mime="text/x-ip-address" data-strict="false">
+127.0.0.1-127.255.255.255 127.0.0.2
+127.0.0.3 ::1
+Spaces and contents other than IP addresses 
+are still considered erroneous</textarea>
+		
+		<h2 id="h2tests">Various tests</h2>
+		<p>
+			IPv4-only textarea
+		</p>
+		<textarea data-mime="text/x-ipv4-address" data-strict="false">
+Correct addresses, CIDR and ranges:
+127.0.0.1 149.210.142.219
+   10.0.0.0/8      10.0.0.0-10.255.255.255
+ 172.16.0.0/12   172.16.0.0-172.31.255.255
+192.168.0.0/16  192.168.0.0-192.168.255.255
+ 100.64.0.0/10   100.64.0.0-100.127.255.255
+149.210.128.0/17
+
+Erroneous addresses:
+256.255.255.255
+255.256.255.255
+255.255.256.255
+255.255.255.256
+256.255.255.256
+255.256.256.255
+256.255.256.255
+255.256.255.256
+
+Erroneous CIDR: 1.2.3.45/33
+Erroneous ranges:
+192.256.0.0-192.168.255.255
+192.168.0.0-192.256.255.255</textarea>
+		<p>
+			IPv6-only textarea
+		</p>
+		<textarea data-mime="text/x-ipv6-address" data-strict="false">
+Correct addresses, CIDR and ranges
+2001:db8:3333:4444:5555:6666:7777:8888
+2001:db8:3333:4444:CCCC:DDDD:EEEE:FFFF
+2001:db8::
+::1234:5678
+2001:db8::1234:5678
+2001:0db8:0001:0000:0000:0ab9:C0A8:0102
+2001:db8:1::ab9:C0A8:102
+::
+
+2001:0db8:0000:0000:0000:0000:0000:0000-2001:0db8:ffff:ffff:ffff:ffff:ffff:ffff
+2001:0db8::-2001:0db8:ffff:ffff:ffff:ffff:ffff:ffff
+
+::1
+2a01:7c8:aab0:26e:5054:ff:fe3a:8388
+2a01:7c8::/32
+
+Incorrect address:
+2a01:7c8:aab0:26e:5054:ff:fe3a::
+
+Dual addreses, some of them too long:
+2001:db8:3333:4444:5555:6666:1.2.3.4
+::11.22.33.44
+2001:db8::123.123.123.123
+::1234:5678:91.123.4.56
+::1234:5678:1.2.3.4
+2001:db8::1234:5678:5.6.7.8
+
+b1::2.7.2.8
+b1:b2::2.7.2.8
+b1:b2:b3::2.7.2.8
+b1:b2:b3:b4::2.7.2.8
+b1:b2:b3:b4:b5::2.8.2.9
+::b3:b4:b5:b6:b7:2.8.2.9
+::b3:b4:b5:b6:2.7.2.8
+::b4:b5:b6:2.7.2.8
+::b5:b6:2.7.2.8
+::b6:2.7.2.8
+::2.7.2.8</textarea>
+		<p>
+			IPv4+IPv6 textarea:
+		</p>
+	<textarea data-mime="text/x-ip-address" data-strict="false">
+1.2.3.4
+2001::1:2:3:4</textarea>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.61.1/codemirror.min.js" 
+			integrity="sha512-ZTpbCvmiv7Zt4rK0ltotRJVRaSBKFQHQTrwfs6DoYlBYzO1MA6Oz2WguC+LkV8pGiHraYLEpo7Paa+hoVbCfKw=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer">
+		</script>
+		<script src="src/ipaddr.js"></script>
+		<script>
+			function demo(textarea) {
+				var mime = textarea.attributes['data-mime'];
+				if (!mime) return;
+
+				var conf = {
+					lineNumbers: textarea.value.split('\n').length > 1,
+					indentWithTabs: true,
+					showCursorWhenSelecting: true,
+					mode: { name: mime.value },
+				};
+				if (textarea.attributes['data-strict']) conf.mode.strict = false;
+				CodeMirror.fromTextArea(textarea, conf);
+			}
+			var i, textareas = document.getElementsByTagName('textarea');
+			for (i = 0; i < textareas.length; ++ i) demo(textareas[i]);
+		</script>
+	</body>
+</html>
