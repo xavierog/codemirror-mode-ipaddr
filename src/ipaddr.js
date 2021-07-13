@@ -114,7 +114,7 @@ CodeMirror.defineMode('ipaddr', function(editor_options) {
 		if (rem = stream.match(/^(\d+)/)) {
 			if (Number(rem[1]) < 256) {
 				++ state.block_count;
-				state.expect_dot = state.block_count < 4; 
+				state.expect_dot = state.block_count < 4;
 				return 'number';
 			}
 		}
