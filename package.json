@@ -1,6 +1,6 @@
 {
   "name": "codemirror-mode-ipaddr",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "IP addresses mode for CodeMirror",
   "main": "src/ipaddr.js",
   "scripts": {
