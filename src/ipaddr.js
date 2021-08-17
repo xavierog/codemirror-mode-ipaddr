@@ -1,4 +1,4 @@
-CodeMirror.defineMode('ipaddr', function(editor_options) {
+CodeMirror.defineMode('ipaddr', function(editor_options, mode_options) {
 	var
 		UNKNOWN = 0,
 		IPV4 = 1, // Pure IPv4 address
@@ -16,14 +16,17 @@ CodeMirror.defineMode('ipaddr', function(editor_options) {
 	};
 
 	// Override options.default_state if invoked through a MIME type:
-	var invoked_named = typeof editor_options.mode === 'string' ? editor_options.mode : editor_options.mode.name;
-	if (invoked_named === 'text/x-ipv4-address') options.default_state = IPV4;
-	else if (invoked_named === 'text/x-ipv6-address') options.default_state = IPV6;
+	function is_mime_type(str) { return (typeof str === 'string') && (str.indexOf('/') !== -1); }
+	var invoked_mime;
+	if (is_mime_type(mode_options.name)) invoked_mime = mode_options.name;
+	else if (is_mime_type(editor_options.mode)) invoked_mime = editor_options.mode;
+	else if (is_mime_type(editor_options.mode.name)) invoked_mime = editor_options.mode.name;
+	if (invoked_mime === 'text/x-ipv4-address') options.default_state = IPV4;
+	else if (invoked_mime === 'text/x-ipv6-address') options.default_state = IPV6;
 
 	// Override default settings with user-provided settings:
-	var user_options = typeof editor_options.mode === 'string' ? {} : editor_options.mode;
 	for (option in options) {
-		if (option in user_options) options[option] = user_options[option];
+		if (option in mode_options) options[option] = mode_options[option];
 	}
 
 	// Helpers:
